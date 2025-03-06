@@ -4,6 +4,7 @@ import os
 import requests
 import json
 import sys
+import subprocess
 import getpass
 
 # GitHub API URL
