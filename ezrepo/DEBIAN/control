@@ -1,0 +1,12 @@
+Package: ezrepo
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: all
+Depends: python3 (>=3.6), python3-requests
+Maintainer: Ahmed Wagdy <ahmedwagdymohy@gmail.com>
+Description: GitHub repository creation tool
+ ezrepo is a command-line tool that automates the process
+ of creating GitHub repositories with customizable options
+ such as README initialization, privacy settings, and descriptions.
+ 

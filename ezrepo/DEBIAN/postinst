@@ -1,0 +1,70 @@
+#!/bin/bash
+set -e
+
+# Make the script executable
+chmod +x /usr/bin/ezrepo
+
+# Create a setup script
+cat > /usr/bin/ezrepo-setup << 'EOF'
+#!/bin/bash
+
+# Display welcome message
+echo "===== ezrepo Setup ====="
+echo "ezrepo requires a GitHub personal access token to function."
+echo ""
+echo "You can generate a GitHub token by visiting: https://github.com/settings/tokens"
+echo "The token needs 'repo' permissions to create repositories."
+echo ""
+
+# Prompt for the token
+read -p "Please paste your GitHub token: " github_token
+
+if [[ -z "$github_token" ]]; then
+    echo "No token provided. You'll need to set the GITHUB_TOKEN environment variable manually."
+    exit 1
+fi
+
+# Determine which shell configuration file to use
+shell_config=""
+if [[ -f "$HOME/.bashrc" ]]; then
+    shell_config="$HOME/.bashrc"
+elif [[ -f "$HOME/.zshrc" ]]; then
+    shell_config="$HOME/.zshrc"
+fi
+
+if [[ -n "$shell_config" ]]; then
+    # Check if token is already in the config
+    if grep -q "export GITHUB_TOKEN" "$shell_config"; then
+        # Update existing token
+        sed -i "s/export GITHUB_TOKEN=.*/export GITHUB_TOKEN=$github_token/" "$shell_config"
+        echo "Updated existing GITHUB_TOKEN in $shell_config"
+    else
+        # Add new token
+        echo "" >> "$shell_config"
+        echo "# GitHub token for ezrepo" >> "$shell_config"
+        echo "export GITHUB_TOKEN=$github_token" >> "$shell_config"
+        echo "Added GITHUB_TOKEN to $shell_config"
+    fi
+    
+    echo ""
+    echo "Token has been added to $shell_config"
+    echo "Please run 'source $shell_config' or restart your terminal to apply changes."
+else
+    echo ""
+    echo "Could not find shell configuration file (.bashrc or .zshrc)."
+    echo "Please manually add the following line to your shell configuration:"
+    echo "export GITHUB_TOKEN=$github_token"
+fi
+
+echo ""
+echo "Setup of ezrepo is complete!"
+echo "Run 'ezrepo -h' for usage information."
+EOF
+
+# Make the setup script executable
+chmod +x /usr/bin/ezrepo-setup
+
+echo "ezrepo has been installed."
+echo "Please run 'ezrepo-setup' to configure your GitHub token."
+
+exit 0 
